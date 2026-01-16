@@ -1,0 +1,15 @@
+{
+  "name": "@bee-plus/utils",
+  "version": "1.0.0",
+  "description": "Utility functions for bee-plus component library",
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.0"
+}

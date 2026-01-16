@@ -1,0 +1,24 @@
+{
+  "name": "bee-plus",
+  "version": "1.0.0",
+  "description": "A simple Vue3 + TypeScript components library",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm -C usedemo/demo-proj dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.3",
+    "@vue/tsconfig": "^0.4.0",
+    "sass": "^1.65.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@bee-plus/components": "workspace:^",
+    "@bee-plus/theme-chalk": "workspace:^",
+    "@bee-plus/utils": "workspace:^",
+    "vue": "^3.3.4"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@bee-plus/theme-chalk",
+  "version": "1.0.0",
+  "description": "Default theme styles for bee-plus component library",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.0"
+}

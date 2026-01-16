@@ -1,0 +1,6 @@
+packages:
+  - packages/*
+  - documents
+  - usedemo/demo-proj
+  # exclude packages that are inside test directories
+  - "!**/test/**"

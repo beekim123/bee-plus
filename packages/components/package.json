@@ -1,0 +1,15 @@
+{
+  "name": "@bee-plus/components",
+  "version": "1.0.0",
+  "description": "Vue 3 component library for bee-plus",
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.0"
+}

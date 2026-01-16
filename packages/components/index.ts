@@ -1,0 +1,2 @@
+// Main entry point for @bee-plus/components
+export { default as BeeButton } from './button/index.js'
