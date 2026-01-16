@@ -1,0 +1,161 @@
+@use "sass:math";
+@use "../mixins/mixins" as *;
+
+@include b(progress) {
+    display: flex;
+    align-items: center;
+
+    @include m(line) {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    @include m(circle) {
+        display: inline-block;
+        margin-right: 15px;
+    }
+
+    @include m(dashboard) {
+        display: inline-block;
+        margin-right: 15px;
+    }
+
+    // --- Text ---
+    @include e(text) {
+        font-size: 14px;
+        color: #606266;
+        margin-left: 10px;
+        display: inline-block;
+        min-width: 50px;
+        line-height: 1;
+
+        i {
+            font-size: 16px;
+            vertical-align: middle;
+        }
+    }
+
+    @include m(without-text) {
+        @include e(text) {
+            display: none;
+        }
+
+        // For line type without text, allow bar to take full width
+        .bee-progress-bar {
+            display: block; // Or ensure flex layout handles right
+            // width: 100%; already set
+            padding-right: 0;
+            margin-right: 0;
+        }
+    }
+}
+
+// --- Line Bar ---
+@include b(progress-bar) {
+    flex: 1; // Take remaining space if text is present
+    width: 100%;
+    box-sizing: border-box;
+
+    // Padding right for text is handled by flexbox gap or margin on text usually, 
+    // but if we want strictly strict structure similarly to Element:
+    margin-right: 0;
+    padding-right: 50px; // Default space for text
+    margin-bottom: 0px; // Reset from parent mixin if needed
+
+    @include e(outer) {
+        height: 6px;
+        border-radius: 100px;
+        background-color: #ebeef5;
+        overflow: hidden;
+        position: relative;
+        vertical-align: middle;
+        border: 2px solid #000; // --- Pop Style Border ---
+        box-shadow: 2px 2px 0 #000;
+    }
+
+    @include e(inner) {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background-color: #409eff;
+        text-align: right;
+        border-radius: 100px;
+        line-height: 1;
+        white-space: nowrap;
+
+        // Pop Style Texture or Highlight
+        background-image: linear-gradient(rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 100%);
+
+        @include e(innerText) {
+            display: inline-block;
+            vertical-align: middle;
+            color: #fff;
+            font-size: 12px;
+            margin: 0 5px;
+            text-shadow: 1px 1px 0 #000; // Pop text shadow
+            font-weight: bold;
+        }
+    }
+}
+
+// --- Text Inside Adjustment ---
+@include m(text-inside) {
+    @include b(progress-bar) {
+        padding-right: 0; // No space for outside text needed
+
+        @include e(outer) {
+            // Typically taller for text inside
+        }
+    }
+}
+
+
+// --- Circle & Dashboard ---
+@include b(progress-circle) {
+    position: relative;
+
+    svg {
+        transform: rotate(-90deg);
+        // Note: Dashboard rotation is handled by path calc usually
+    }
+
+    // Pop Style Thick Tracks
+    @include e(track) {
+        stroke: #ebeef5;
+        stroke-linecap: round;
+        // We can't easily add CSS border to SVG path, but we rely on color/width
+    }
+
+    // Pop Style Path
+    @include e(path) {
+        stroke-linecap: round;
+        // Shadow via filter? 
+        filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 1));
+    }
+}
+
+
+// --- Status Colors (handled via inline style mostly, but we can set text color) ---
+.is-success .bee-progress__text {
+    color: #67c23a;
+}
+
+.is-warning .bee-progress__text {
+    color: #e6a23c;
+}
+
+.is-exception .bee-progress__text {
+    color: #f56c6c;
+}
+
+// --- Canvas Wrapper ---
+.bee-progress-canvas {
+
+    // Styles for the canvas container
+    canvas {
+        // Ensure canvas respects layout
+        vertical-align: middle;
+    }
+}

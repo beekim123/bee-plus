@@ -1,0 +1,206 @@
+@use "../mixins/mixins" as *;
+
+// Brawl Stars / Supercell Style Variables
+@use "sass:color";
+$border-width: 3px; // Thicker border
+$border-color: #000000;
+$shadow-offset: 6px; // Deep shadow
+$shadow-color: #000000;
+$radius: 12px; // Rounded but blocky
+
+@include b(button) {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    line-height: normal; // Use normal to let padding handle height naturally
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+
+    // Font
+    font-family: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; // Chunky sans-serif
+    font-weight: 900;
+    font-size: 16px;
+    text-transform: uppercase; // Brawl stars buttons are often shouting
+    letter-spacing: 0.5px;
+    text-shadow: 2px 2px 0 #000; // Text stroke effect using shadow
+
+    // Box Model
+    border: $border-width solid $border-color;
+    border-radius: $radius;
+    outline: none;
+    margin: 0;
+    padding: 12px 24px;
+    box-sizing: border-box;
+
+    // 3D Plastic Effect
+    background-image: linear-gradient(to bottom, color.scale(#ffffff, $lightness: 5%), color.scale(#ffffff, $lightness: -10%));
+    background-color: #fff;
+    color: #fff; // Text is almost always white with stroke
+
+    // The Signature Hard Shadow & Inset Highlight
+    box-shadow:
+        inset 0 4px 0 rgba(255, 255, 255, 0.4), // Top shine
+        inset 0 -4px 0 rgba(0, 0, 0, 0.1), // Bottom shading
+        0 $shadow-offset 0 $shadow-color; // Hard drop shadow
+
+    transition: transform 0.05s, box-shadow 0.05s; // Snappy transition
+    position: relative;
+    top: 0;
+
+    // Icons
+    & [class*="#{$namespace}-icon-"] {
+        font-size: 1.2em;
+        filter: drop-shadow(2px 2px 0 #000); // Shadow for icons too
+
+        &+span {
+            margin-left: 8px;
+        }
+    }
+
+    // Hover - Brighten slightly
+    &:hover {
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+        box-shadow:
+            inset 0 4px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -4px 0 rgba(0, 0, 0, 0.1),
+            0 ($shadow-offset + 2px) 0 $shadow-color;
+    }
+
+    // Active - Press down
+    &:active {
+        transform: translateY($shadow-offset);
+        box-shadow:
+            inset 0 4px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -4px 0 rgba(0, 0, 0, 0.1),
+            0 0 0 $shadow-color;
+        filter: brightness(0.95);
+    }
+
+    // Disabled
+    @include when(disabled) {
+
+        &,
+        &:hover,
+        &:focus,
+        &:active {
+            filter: grayscale(100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow:
+                inset 0 4px 0 rgba(255, 255, 255, 0.2),
+                0 $shadow-offset 0 #333;
+            opacity: 0.8;
+            background: #999;
+        }
+    }
+
+    // --- Types ---
+    // Default (White/Grayish - often used for settings/secondary)
+    & {
+        background-color: #f0f0f0;
+        background-image: linear-gradient(to bottom, #ffffff, #dcdcdc);
+        color: #333;
+        text-shadow: none; // No outline for default usually
+        // But let's keep consistency for "cartoon" feel
+        text-shadow: 1px 1px 0 #fff;
+    }
+
+    @include m(primary) {
+        // Brawl Blue
+        background-color: #007bff;
+        background-image: linear-gradient(to bottom, #4facfe, #005bea);
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    @include m(success) {
+        // Brawl Lime
+        background-color: #2ed573;
+        background-image: linear-gradient(to bottom, #7bed9f, #2ed573);
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    @include m(warning) {
+        // Brawl Gold/Yellow
+        background-color: #ffa502;
+        background-image: linear-gradient(to bottom, #ffeaa7, #fab1a0); // Gold-ish
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    @include m(danger) {
+        // Brawl Red
+        background-color: #ff4757;
+        background-image: linear-gradient(to bottom, #ff6b81, #ff4757);
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    @include m(info) {
+        background-color: #a29bfe;
+        background-image: linear-gradient(to bottom, #a29bfe, #6c5ce7);
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    // --- Shapes ---
+    @include when(round) {
+        border-radius: 50px;
+    }
+
+    @include when(circle) {
+        border-radius: 50%;
+        padding: 0;
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        // Fix icon alignment in circle
+        [class*="#{$namespace}-icon-"] {
+            font-size: 20px;
+            margin: 0 !important;
+        }
+    }
+
+    // --- Sizes ---
+    @include m(large) {
+        font-size: 20px;
+        padding: 16px 32px;
+        border-width: 4px;
+        $shadow-offset: 8px;
+        box-shadow:
+            inset 0 4px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -4px 0 rgba(0, 0, 0, 0.1),
+            0 8px 0 $shadow-color;
+
+        &:active {
+            transform: translateY(8px);
+            box-shadow:
+                inset 0 4px 0 rgba(255, 255, 255, 0.4),
+                0 0 0 $shadow-color;
+        }
+    }
+
+    @include m(small) {
+        font-size: 12px;
+        padding: 8px 16px;
+        border-width: 2px;
+        box-shadow:
+            inset 0 2px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -2px 0 rgba(0, 0, 0, 0.1),
+            0 4px 0 $shadow-color;
+
+        &:active {
+            transform: translateY(4px);
+            box-shadow:
+                inset 0 2px 0 rgba(255, 255, 255, 0.4),
+                0 0 0 $shadow-color;
+        }
+    }
+}

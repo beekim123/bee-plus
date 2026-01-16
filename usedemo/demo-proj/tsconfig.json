@@ -6,7 +6,8 @@
     "src/**/*.vue"
   ],
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true
   }
 }

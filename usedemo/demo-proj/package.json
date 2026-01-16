@@ -17,7 +17,9 @@
   },
   "dependencies": {
     "@bee-plus/components": "workspace:*",
+    "@bee-plus/theme-chalk": "workspace:*",
     "@bee-plus/utils": "workspace:*",
+    "highlight.js": "^11.11.1",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
   },
