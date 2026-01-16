@@ -1,0 +1,19 @@
+{
+    "extends": "./tsconfig.app.json",
+    "compilerOptions": {
+        "module": "ESNext",
+        "declaration": false,
+        "noEmit": true
+    },
+    "include": [
+        "packages/**/*.ts",
+        "packages/**/*.tsx",
+        "packages/**/*.vue"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/__tests__",
+        "dist",
+        "packages/**/dist"
+    ]
+}
