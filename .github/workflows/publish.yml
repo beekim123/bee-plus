@@ -6,12 +6,12 @@ name: Bee-Plus CI/CD
 on:
   push:
     branches:
-      - '1.0.0' # 监控 1.0.0 分支
+      - 'release/online' # 只要推送到 release/online 分支就触发发布
     tags:
       - 'v*'
   pull_request:
     branches:
-      - '1.0.0' # 监控 1.0.0 分支
+      - 'release/online' # 监控对此分支的 PR，只跑测试
 
 jobs:
   # 任务 1：代码质检 (CI)
@@ -21,40 +21,49 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 安装 PNPM
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'  # 自动缓存 npm 依赖，加快构建
+          cache: 'pnpm' # 使用 pnpm 缓存
 
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run Unit Tests
         run: npm run test
 
-      # 如果你有 lint 脚本，也可以在这里加
-      # - name: Lint Code
-      #   run: npm run lint
-
   # 任务 2：构建与发布 (CD)
-  # 只有当 tag 被推送，且 test 任务成功后才会执行
   publish:
     needs: test
-    if: startsWith(github.ref, 'refs/tags/v')
+    # 条件：是 v 开头的 tag，或者 是 release/online 分支的推送
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/release/online'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 安装 PNPM
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org' # 强制指定官方源
+          cache: 'pnpm' # 使用 pnpm 缓存
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Build Project
         run: npm run build
@@ -62,11 +71,8 @@ jobs:
       - name: Generate Types
         run: npm run build:types
 
-      # 关键步骤：发布到 NPM
       - name: Publish to NPM
-        # 必须进入到包目录发布，这和我们本地操作一致
         working-directory: packages/bee-plus
         run: npm publish --access public
         env:
-          # 这里的 NODE_AUTH_TOKEN 是你在 GitHub 仓库 Settings -> Secrets 里配置的
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
