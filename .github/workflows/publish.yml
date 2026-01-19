@@ -1,0 +1,72 @@
+name: Bee-Plus CI/CD
+
+# 触发机制：
+# 1. 向 main 分支推送代码时 -> 跑测试 (CI)
+# 2. 推送 v*.*.* 格式的 tag 时 (如 v1.0.3) -> 跑测试 + 打包 + 发布到 NPM (CD)
+on:
+  push:
+    branches:
+      - '1.0.0' # 监控 1.0.0 分支
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - '1.0.0' # 监控 1.0.0 分支
+
+jobs:
+  # 任务 1：代码质检 (CI)
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'  # 自动缓存 npm 依赖，加快构建
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      # 如果你有 lint 脚本，也可以在这里加
+      # - name: Lint Code
+      #   run: npm run lint
+
+  # 任务 2：构建与发布 (CD)
+  # 只有当 tag 被推送，且 test 任务成功后才会执行
+  publish:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org' # 强制指定官方源
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Generate Types
+        run: npm run build:types
+
+      # 关键步骤：发布到 NPM
+      - name: Publish to NPM
+        # 必须进入到包目录发布，这和我们本地操作一致
+        working-directory: packages/bee-plus
+        run: npm publish --access public
+        env:
+          # 这里的 NODE_AUTH_TOKEN 是你在 GitHub 仓库 Settings -> Secrets 里配置的
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

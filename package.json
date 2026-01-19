@@ -1,5 +1,6 @@
 {
   "name": "bee-plus",
+  "private": true,
   "version": "1.0.0",
   "description": "A simple Vue3 + TypeScript components library",
   "main": "index.js",
