@@ -90,6 +90,25 @@ npm run build:types
 2.  构建代码 (Build)
 3.  **自动发布到 NPM** (Publish)
 
+**发布命令参考：**
+```bash
+# 1. 在开发分支 (如 1.0.0) 提交代码
+git add .
+git commit -m "feat: update some features"
+git push origin 1.0.0
+
+# 2. 切换到发布分支并合并
+# 注意：如果是第一次创建该分支，请使用 git checkout -b release/online
+git checkout release/online
+git merge 1.0.0
+
+# 3. 推送触发自动发包
+git push origin release/online
+
+# 4. 切回开发分支继续工作
+git checkout 1.0.0
+```
+
 #### 方式二：Tag 触发（备用）
 如果你在其他分支（如 main）想紧急发版：
 ```bash
