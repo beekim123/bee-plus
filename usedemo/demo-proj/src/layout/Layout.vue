@@ -6,13 +6,16 @@ const route = useRoute()
 const menuItems = [
   { name: 'Button 按钮', path: '/component/button' },
   { name: 'Progress 进度条', path: '/component/progress' },
+  { name: 'Message 消息提示', path: '/component/message' },
 ]
 </script>
 
 <template>
   <div class="app-container">
     <header class="app-header">
-      <div class="logo">🐝 Bee Plus</div>
+      <div class="logo">
+        <span>Bee Plus</span>
+      </div>
     </header>
 
     <div class="main-body">
@@ -28,6 +31,9 @@ const menuItems = [
             {{ item.name }}
           </RouterLink>
         </nav>
+        <div class="sidebar-footer">
+          CREATED BY BEE
+        </div>
       </aside>
 
       <main class="app-content">
@@ -48,6 +54,10 @@ const menuItems = [
 }
 
 .app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 80px;
   background: #fbc531; /* Pop Yellow */
   color: #2d3436;
@@ -55,10 +65,13 @@ const menuItems = [
   align-items: center;
   padding: 0 30px;
   border-bottom: 4px solid #000;
-  z-index: 10;
+  z-index: 100;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 32px;
   font-weight: 900;
   text-transform: uppercase;
@@ -72,18 +85,42 @@ const menuItems = [
   letter-spacing: 1px;
 }
 
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  filter: drop-shadow(3px 3px 0 #000);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
 .main-body {
   display: flex;
   flex: 1;
+  margin-top: 80px;
 }
 
 .app-sidebar {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  bottom: 0;
   width: 260px;
   background: #353b48; /* Dark Blue-Grey */
   border-right: 4px solid #000;
   padding: 20px 10px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  z-index: 50;
 }
 
 .menu-item {
@@ -122,12 +159,33 @@ const menuItems = [
 
 .app-content {
   flex: 1;
+  margin-left: 260px;
   padding: 40px;
   overflow-y: auto;
   background-color: #f5f6fa;
   background-image: radial-gradient(#dcdde1 15%, transparent 16%), radial-gradient(#dcdde1 15%, transparent 16%);
   background-size: 20px 20px;
   background-position: 0 0, 10px 10px;
+  position: relative;
+}
+
+/* 侧边栏底部文字 */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 确保内容在水印之上 */
+.app-content > * {
+  position: relative;
+  z-index: 2;
 }
 
 @media (max-width: 768px) {

@@ -39,6 +39,107 @@ bee-plus/
 
 ---
 
+## 📦 安装与使用
+
+### 安装
+
+```bash
+npm install bee-plus
+# 或
+pnpm add bee-plus
+# 或
+yarn add bee-plus
+```
+
+### 完整引入
+
+在 `main.ts` 中全局注册所有组件：
+
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+
+// 1. 引入组件库
+import BeePlus from 'bee-plus'
+// 2. 引入样式（必须）
+import 'bee-plus/dist/index.css'
+
+const app = createApp(App)
+// 3. 注册所有组件
+app.use(BeePlus)
+app.mount('#app')
+```
+
+### 按需引入
+
+如果你只想引入部分组件：
+
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+// 1. 引入需要的组件
+import { BeeButton, BeeProgress, BeeMessage } from 'bee-plus'
+// 2. 引入样式（必须）
+import 'bee-plus/dist/index.css'
+
+const app = createApp(App)
+// 3. 注册组件
+app.use(BeeButton)
+app.use(BeeProgress)
+// Message 是函数式调用，无需注册
+app.mount('#app')
+```
+
+### 组件使用示例
+
+#### Button 按钮
+
+```vue
+<template>
+  <BeeButton type="primary">主要按钮</BeeButton>
+  <BeeButton type="success" round>圆角按钮</BeeButton>
+  <BeeButton type="danger" loading>加载中</BeeButton>
+</template>
+```
+
+#### Progress 进度条
+
+```vue
+<template>
+  <BeeProgress :percentage="50" />
+  <BeeProgress :percentage="80" type="success" />
+  <BeeProgress type="circle" :percentage="75" />
+</template>
+```
+
+#### Message 消息提示
+
+```typescript
+import { BeeMessage } from 'bee-plus'
+
+// 基础用法
+BeeMessage('这是一条消息')
+
+// 不同类型
+BeeMessage.success('操作成功')
+BeeMessage.warning('警告信息')
+BeeMessage.error('错误提示')
+BeeMessage.info('普通消息')
+
+// 高级配置
+BeeMessage({
+  message: '这是一条消息',
+  type: 'success',
+  duration: 3000,
+  showClose: true,
+  onClose: () => {
+    console.log('消息已关闭')
+  }
+})
+```
+
+---
+
 ## 🚀 贡献与开发
 
 ### 1. 环境准备

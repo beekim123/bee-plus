@@ -18,6 +18,11 @@ const router = createRouter({
           path: 'component/progress',
           name: 'progress',
           component: () => import('../views/component/ProgressDemo.vue')
+        },
+        {
+          path: 'component/message',
+          name: 'message',
+          component: () => import('../views/component/MessageDemo.vue')
         }
       ]
     }

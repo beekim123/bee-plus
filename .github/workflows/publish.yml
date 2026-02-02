@@ -1,78 +1,95 @@
 name: Bee-Plus CI/CD
 
-# 触发机制：
-# 1. 向 main 分支推送代码时 -> 跑测试 (CI)
-# 2. 推送 v*.*.* 格式的 tag 时 (如 v1.0.3) -> 跑测试 + 打包 + 发布到 NPM (CD)
+# 触发机制配置
+# CI (持续集成): 只要有代码推送到 release/online 分支，或有针对该分支的 PR，就运行测试
+# CD (持续部署): 只有推送到 release/online 分支，或推送了版本 Tag (v*) 时，且测试通过，才执行发包
 on:
   push:
     branches:
-      - 'release/online' # 只要推送到 release/online 分支就触发发布
+      - 'release/online' # 监控发布分支的推送
     tags:
-      - 'v*'
+      - 'v*'             # 监控版本 Tag (如 v1.0.0)
   pull_request:
     branches:
-      - 'release/online' # 监控对此分支的 PR，只跑测试
+      - 'release/online' # 监控合并到发布分支的 PR (只触发 test 任务)
 
 jobs:
+  # ===================================================
   # 任务 1：代码质检 (CI)
+  # 作用：在干净的 Linux 环境中安装依赖并运行单元测试
+  # ===================================================
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 容器
     steps:
+      # 1. 拉取代码到容器
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 安装 PNPM
+      # 2. 安装 pnpm 包管理器 (因为本项目使用 pnpm workspace)
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
 
+      # 3. 安装 Node.js 环境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm' # 使用 pnpm 缓存
+          cache: 'pnpm' # 开启 pnpm 依赖缓存，加快后续构建速度
 
+      # 4. 安装项目依赖
       - name: Install Dependencies
         run: pnpm install
 
+      # 5. 运行单元测试 (Vitest)
       - name: Run Unit Tests
         run: npm run test
 
+  # ===================================================
   # 任务 2：构建与发布 (CD)
+  # 作用：构建打包，并自动发布到 NPM
+  # 前置条件：必须等 'test' 任务成功完成后才执行
+  # ===================================================
   publish:
-    needs: test
-    # 条件：是 v 开头的 tag，或者 是 release/online 分支的推送
+    needs: test # 依赖 test 任务，如果测试挂了，这里不执行
+    # 安全门卫：只有是 tag 推送，或者 release/online 分支的推送才允许发包
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/release/online'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 安装 PNPM
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
 
+      # 配置 Node.js 并指定 NPM 官方源 (防止发包时发到淘宝源去)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm' # 使用 pnpm 缓存
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
         run: pnpm install
 
+      # 6. 执行构建 (生成 dist 目录)
       - name: Build Project
         run: npm run build
 
+      # 7. 生成 .d.ts 类型定义文件
       - name: Generate Types
         run: npm run build:types
 
+      # 8. 执行发布
+      # 注意：working-directory 指定了只发布 packages/bee-plus 下的内容
       - name: Publish to NPM
         working-directory: packages/bee-plus
         run: npm publish --access public
         env:
+          # 从 GitHub Secrets 中读取名为 NPM_TOKEN 的密钥
+          # 用于免密登录 NPM
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
